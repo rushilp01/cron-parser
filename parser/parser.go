@@ -34,6 +34,14 @@ type SingleValueParser struct {
 	Value int
 }
 
+// Parse
+/**
+ * Parses a * pattern in the cron expression.
+ *
+ * @param min   The minimum allowed value for the expression.
+ * @param max   The maximum allowed value for the expression.
+ * @return A list of integers converted to string representing the parsed values for the * pattern.
+ */
 func (p WildcardParser) Parse(min, max int) ([]string, error) {
 	var values []string
 	for i := min; i <= max; i++ {
@@ -41,6 +49,15 @@ func (p WildcardParser) Parse(min, max int) ([]string, error) {
 	}
 	return values, nil
 }
+
+// Parse
+/**
+ * Parses a step(/) pattern in the cron expression.
+ *
+ * @param min   The minimum allowed value for the expression.
+ * @param max   The maximum allowed value for the expression.
+ * @return A list of integers converted to string representing the parsed values for the / pattern.
+ */
 
 func (p StepParser) Parse(min, max int) ([]string, error) {
 	var values []string
@@ -51,6 +68,14 @@ func (p StepParser) Parse(min, max int) ([]string, error) {
 	return values, nil
 }
 
+// Parse
+/**
+ * Parses a list pattern in the cron expression.
+ *
+ * @param min   The minimum allowed value for the expression.
+ * @param max   The maximum allowed value for the expression.
+ * @return A list of integers converted to string representing the parsed values for the , pattern.
+ */
 func (p ListParser) Parse(min, max int) ([]string, error) {
 	var values []string
 	for _, v := range p.List {
@@ -66,6 +91,14 @@ func (p ListParser) Parse(min, max int) ([]string, error) {
 	return values, nil
 }
 
+// Parse
+/**
+ * Parses a range pattern in the cron expression.
+ *
+ * @param min   The minimum allowed value for the expression.
+ * @param max   The maximum allowed value for the expression.
+ * @return A list of integers converted to string representing the parsed values for the - pattern.
+ */
 func (p RangeParser) Parse(min, max int) ([]string, error) {
 	var values []string
 	if p.Start < min || p.End > max {
@@ -77,6 +110,14 @@ func (p RangeParser) Parse(min, max int) ([]string, error) {
 	return values, nil
 }
 
+// Parse
+/**
+ * Parses a single value pattern in the cron expression.
+ *
+ * @param min   The minimum allowed value for the expression.
+ * @param max   The maximum allowed value for the expression.
+ * @return A list of integer converted to string representing the parsed values for the single value pattern.
+ */
 func (p SingleValueParser) Parse(min, max int) ([]string, error) {
 	if p.Value < min || p.Value > max {
 		return nil, fmt.Errorf("value %d out of range [%d, %d]", p.Value, min, max)
