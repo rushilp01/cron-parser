@@ -23,24 +23,43 @@ func Validate(fields []string) (CronParser, error) {
 	if len(fields) != 6 {
 		return CronParser{}, fmt.Errorf("invalid number of fields: expected 6, got %d", len(fields))
 	}
-
-	minuteExpanded, err := getFieldParser(fields[constants.MinuteIndex]).Parse(constants.MinuteMinValue, constants.MinuteMaxValue)
+	parser, err := getFieldParser(fields[constants.MinuteIndex])
 	if err != nil {
 		return CronParser{}, fmt.Errorf("error parsing minute field: %v", err)
 	}
-	hourExpanded, err := getFieldParser(fields[constants.HourIndex]).Parse(constants.HourMinValue, constants.HourMaxValue)
+	minuteExpanded, err := parser.Parse(constants.MinuteMinValue, constants.MinuteMaxValue)
+	if err != nil {
+		return CronParser{}, fmt.Errorf("error parsing minute field: %v", err)
+	}
+	parser, err = getFieldParser(fields[constants.HourIndex])
 	if err != nil {
 		return CronParser{}, fmt.Errorf("error parsing hour field: %v", err)
 	}
-	dayOfMonthExpanded, err := getFieldParser(fields[constants.DayOfMonthIndex]).Parse(constants.DayOfMonthMinValue, constants.DayOfMonthMaxValue)
+	hourExpanded, err := parser.Parse(constants.HourMinValue, constants.HourMaxValue)
+	if err != nil {
+		return CronParser{}, fmt.Errorf("error parsing hour field: %v", err)
+	}
+	parser, err = getFieldParser(fields[constants.DayOfMonthIndex])
 	if err != nil {
 		return CronParser{}, fmt.Errorf("error parsing day of month field: %v", err)
 	}
-	monthExpanded, err := getFieldParser(fields[constants.MonthIndex]).Parse(constants.MonthMinValue, constants.MonthMaxValue)
+	dayOfMonthExpanded, err := parser.Parse(constants.DayOfMonthMinValue, constants.DayOfMonthMaxValue)
+	if err != nil {
+		return CronParser{}, fmt.Errorf("error parsing day of month field: %v", err)
+	}
+	parser, err = getFieldParser(fields[constants.MonthIndex])
 	if err != nil {
 		return CronParser{}, fmt.Errorf("error parsing month field: %v", err)
 	}
-	dayOfWeekExpanded, err := getFieldParser(fields[constants.DayOfWeekIndex]).Parse(constants.DayOfWeekMinValue, constants.DayOfWeekMaxValue)
+	monthExpanded, err := parser.Parse(constants.MonthMinValue, constants.MonthMaxValue)
+	if err != nil {
+		return CronParser{}, fmt.Errorf("error parsing month field: %v", err)
+	}
+	parser, err = getFieldParser(fields[constants.DayOfWeekIndex])
+	if err != nil {
+		return CronParser{}, fmt.Errorf("error parsing day of week field: %v", err)
+	}
+	dayOfWeekExpanded, err := parser.Parse(constants.DayOfWeekMinValue, constants.DayOfWeekMaxValue)
 	if err != nil {
 		return CronParser{}, fmt.Errorf("error parsing day of week field: %v", err)
 	}

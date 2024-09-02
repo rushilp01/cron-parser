@@ -126,25 +126,37 @@ func (p SingleValueParser) Parse(min, max int) ([]string, error) {
 }
 
 // Factory function to get the appropriate parser
-func getFieldParser(field string) FieldParser {
+func getFieldParser(field string) (FieldParser, error) {
 	if field == "*" {
-		return WildcardParser{}
+		return WildcardParser{}, nil
 	}
 	if strings.Contains(field, "/") {
 		parts := strings.Split(field, "/")
-		step, _ := strconv.Atoi(parts[1])
-		return StepParser{Step: step}
+		step, err := strconv.Atoi(parts[1])
+		if err != nil {
+			return nil, err
+		}
+		return StepParser{Step: step}, nil
 	}
 	if strings.Contains(field, ",") {
 		list := strings.Split(field, ",")
-		return ListParser{List: list}
+		return ListParser{List: list}, nil
 	}
 	if strings.Contains(field, "-") {
 		rangeParts := strings.Split(field, "-")
-		start, _ := strconv.Atoi(rangeParts[0])
-		end, _ := strconv.Atoi(rangeParts[1])
-		return RangeParser{Start: start, End: end}
+		start, err := strconv.Atoi(rangeParts[0])
+		if err != nil {
+			return nil, err
+		}
+		end, err := strconv.Atoi(rangeParts[1])
+		if err != nil {
+			return nil, err
+		}
+		return RangeParser{Start: start, End: end}, nil
 	}
-	num, _ := strconv.Atoi(field)
-	return SingleValueParser{Value: num}
+	num, err := strconv.Atoi(field)
+	if err != nil {
+		return nil, err
+	}
+	return SingleValueParser{Value: num}, nil
 }
